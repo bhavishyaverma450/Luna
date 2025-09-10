@@ -26,16 +26,6 @@ Clone the repository:
 
 Bash
 
-# Clone the frontend
-git clone https://github.com/your-username/luna-app-frontend.git
-cd luna-app-frontend
-
-# Clone the backend
-git clone https://github.com/your-username/luna-app-backend.git
-Set up the backend:
-
-Bash
-
 cd luna-app-backend
 npm install
 
