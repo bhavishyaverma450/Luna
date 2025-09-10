@@ -1,50 +1,63 @@
-# Welcome to your Expo app 👋
+## Luna: Your Personal Period Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Luna is a mobile app designed to help you effortlessly track your menstrual cycle, understand your body's unique patterns, and predict future periods and fertile windows. With Luna, logging your symptoms, moods, and flow is simple, giving you valuable insights into your menstrual health.
 
-## Get started
+🌟 Features
+Cycle and Period Tracking: Log your period start and end dates to get accurate predictions for your next cycle.
 
-1. Install dependencies
+Symptom & Mood Logging: Keep a detailed journal of symptoms like cramps, headaches, and cravings, as well as daily moods, to spot recurring patterns.
 
-   ```bash
-   npm install
-   ```
+Fertility Window Prediction: Our smart algorithm predicts your ovulation day and fertile window, which is helpful for both conception and cycle awareness.
 
-2. Start the app
+Cycle Insights: Visualize your data with easy-to-read charts and summaries that give you a clear overview of your cycle history.
 
-   ```bash
-   npx expo start
-   ```
+🚀 Getting Started
+To get the app up and running on your local machine, follow these steps.
 
-In the output, you'll find options to open the app in a
+Prerequisites
+Node.js and npm
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+MongoDB
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+React Native development environment
 
-## Get a fresh project
+Installation
+Clone the repository:
 
-When you're ready, run:
+Bash
 
-```bash
-npm run reset-project
-```
+# Clone the frontend
+git clone https://github.com/your-username/luna-app-frontend.git
+cd luna-app-frontend
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+# Clone the backend
+git clone https://github.com/your-username/luna-app-backend.git
+Set up the backend:
 
-## Learn more
+Bash
 
-To learn more about developing your project with Expo, look at the following resources:
+cd luna-app-backend
+npm install
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Create a .env file with your database connection string and JWT secret
+# MONGO_URI=your_mongodb_connection_string
+# JWT_SECRET=your_jwt_secret_key
 
-## Join the community
+npm start
+Set up the frontend:
 
-Join our community of developers creating universal apps.
+Bash
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+cd ../luna-app-frontend
+npm install
+
+# Run on Android
+npx react-native run-android
+
+# Run on iOS
+npx react-native run-ios
+🤝 Contributing
+We love contributions! If you'd like to help improve Luna, please check out our contribution guidelines and feel free to submit a pull request.
+
+📄 License
+This project is licensed under the MIT License. See the LICENSE file for more details.
