@@ -1,12 +1,24 @@
 // help.tsx
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, SafeAreaView } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 
+// Reusable FAQ Item Component
+const FAQItem = ({ question, answer, isOpen, onToggle }: { question: string, answer: string, isOpen: boolean, onToggle: () => void }) => (
+  <TouchableOpacity style={styles.card} onPress={onToggle}>
+    <View style={styles.faqHeader}>
+      <Text style={styles.question}>{question}</Text>
+      <Ionicons name={isOpen ? "chevron-up" : "chevron-down"} size={20} color="#666" />
+    </View>
+    {isOpen && <Text style={styles.answer}>{answer}</Text>}
+  </TouchableOpacity>
+);
+
 export default function Help() {
   const router = useRouter();
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
 
   const faqs = [
     {
@@ -27,45 +39,61 @@ export default function Help() {
     },
   ];
 
+  const tips = [
+    "Enable notifications to never miss your cycle updates.",
+    "Keep your profile updated for personalized recommendations.",
+    "Use biometric authentication for quick and secure login.",
+  ];
+
   const contactSupport = () => {
     Linking.openURL("mailto:support@lunaapp.com");
   };
 
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  };
+
   return (
     <LinearGradient colors={["#fef9fb", "#fdf2f8"]} style={styles.container}>
-        <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 20 }}>
-            <View style={styles.header}>
+      <SafeAreaView style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={styles.header}>
             <TouchableOpacity onPress={() => router.back()}>
-                <Ionicons name="arrow-back" size={24} color="#000" />
+              <Ionicons name="arrow-back" size={24} color="#000" />
             </TouchableOpacity>
             <Text style={styles.title}>Help & Support</Text>
             <View style={{ width: 24 }} />
-            </View>
+          </View>
 
-            <Text style={styles.sectionTitle}>FAQs</Text>
-            {faqs.map((faq, index) => (
-            <View key={index} style={styles.card}>
-                <Text style={styles.question}>{faq.question}</Text>
-                <Text style={styles.answer}>{faq.answer}</Text>
-            </View>
-            ))}
-            <Text style={styles.sectionTitle}>Contact Support</Text>
-            <View style={styles.card}>
+          <Text style={styles.sectionTitle}>FAQs</Text>
+          {faqs.map((faq, index) => (
+            <FAQItem
+              key={index}
+              question={faq.question}
+              answer={faq.answer}
+              isOpen={openFaqIndex === index}
+              onToggle={() => toggleFaq(index)}
+            />
+          ))}
+
+          <Text style={styles.sectionTitle}>Contact Support</Text>
+          <View style={styles.card}>
             <Text style={styles.description}>
-                If your question is not answered above, feel free to contact our support team.
+              If your question is not answered above, feel free to contact our support team.
             </Text>
             <TouchableOpacity style={styles.contactButton} onPress={contactSupport}>
-                <Text style={styles.contactButtonText}>Email Support</Text>
+              <Text style={styles.contactButtonText}>Email Support</Text>
             </TouchableOpacity>
-            </View>
+          </View>
 
-            <Text style={styles.sectionTitle}>Tips</Text>
-            <View style={styles.card}>
-            <Text style={styles.description}>• Enable notifications to never miss your cycle updates.</Text>
-            <Text style={styles.description}>• Keep your profile updated for personalized recommendations.</Text>
-            <Text style={styles.description}>• Use biometric authentication for quick and secure login.</Text>
-            </View>
+          <Text style={styles.sectionTitle}>Tips</Text>
+          <View style={styles.card}>
+            {tips.map((tip, index) => (
+              <Text key={index} style={styles.description}>
+                • {tip}
+              </Text>
+            ))}
+          </View>
         </ScrollView>
       </SafeAreaView>
     </LinearGradient>
@@ -74,9 +102,15 @@ export default function Help() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 20 },
+  scrollViewContent: { paddingVertical: 20, paddingHorizontal: 20 },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
   title: { fontSize: 20, fontWeight: "600", color: "#333" },
-  sectionTitle: { fontSize: 18, fontWeight: "600", color: "#333", marginBottom: 10 },
+  sectionTitle: { fontSize: 18, fontWeight: "600", color: "#333", marginBottom: 10, marginTop: 10 },
   card: {
     backgroundColor: "#fff",
     borderRadius: 20,
@@ -88,8 +122,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 3,
   },
-  question: { fontSize: 16, fontWeight: "700", marginBottom: 6, color: "#333" },
-  answer: { fontSize: 15, color: "#555", lineHeight: 22 },
+  faqHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  question: { fontSize: 16, fontWeight: "700", color: "#333" },
+  answer: { fontSize: 15, color: "#555", lineHeight: 22, marginTop: 10 },
   description: { fontSize: 15, color: "#555", lineHeight: 22, marginBottom: 8 },
   contactButton: {
     marginTop: 10,

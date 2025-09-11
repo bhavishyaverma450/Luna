@@ -7,12 +7,12 @@ const PeriodLogSchema = new mongoose.Schema({
         required: true,
     },
     start_date: {
-        type: String, // Stored as an ISO date string (YYYY-MM-DD)
-        required: true, // This field is now required
+        type: String,
+        required: true,
     },
     end_date: {
-        type: String, // Stored as an ISO date string (YYYY-MM-DD)
-        required: true, // This field is also now required
+        type: String,
+        required: true,
     },
     symptoms: {
         type: [String],

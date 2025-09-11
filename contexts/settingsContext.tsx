@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useState, ReactNode } from
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-const API_BASE = "http://10.0.2.2:5000/api/settings"; // match backend
+const API_BASE = "http://192.168.1.6:5000/api/settings"; // match backend
 
 interface SettingsState {
   appLockEnabled: boolean;

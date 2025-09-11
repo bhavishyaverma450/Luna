@@ -46,6 +46,15 @@ export default function AboutLuna() {
               Track progress, set reminders, and stay consistent with your fitness journey.
             </Text>
           </View>
+          
+          {/* Credits Card - Added for you */}
+          <View style={styles.card}>
+            <Text style={styles.title}>Credits</Text>
+            <Text style={styles.description}>
+              This app was designed and developed by Bhavishya Verma. 
+              My goal is to create beautiful and functional wellness applications to help woman live healthier lives using technology.
+            </Text>
+          </View>
 
         </ScrollView>
       </SafeAreaView>

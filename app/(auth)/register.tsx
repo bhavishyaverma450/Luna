@@ -16,6 +16,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height } = Dimensions.get('window');
 
@@ -59,15 +60,18 @@ export default function Register() {
         Alert.alert('Registration Failed', data.error || 'Something went wrong');
         return;
       }
+      
+      // Save the user's name and email to local storage
+      await AsyncStorage.setItem('userName', name);
+      await AsyncStorage.setItem('userEmail', email);
 
       Alert.alert('Success', 'Registration complete! Please login.');
-      router.replace('/(auth)'); // Redirect to login
+      router.replace('/(auth)');
     } catch (err) {
       console.error(err);
       Alert.alert('Error', 'Failed to register. Please try again.');
     }
   };
-
 
   return (
     <LinearGradient colors={['#E0F7FA', '#E3F2FD']} style={styles.gradient}>

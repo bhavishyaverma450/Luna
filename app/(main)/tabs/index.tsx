@@ -20,9 +20,10 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from '@react-navigation/native';
 import DayItem from '@/components/DayItem'; 
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get("window");
-const API_BASE = "http://192.168.1.6:5000/api";
+const API_BASE = "http://192.168.1.6:5000/api/auth";
 
 interface PeriodRange {
   start: string;
@@ -55,8 +56,8 @@ const getPredictions = (periods: PeriodRange[]): PredictionData => {
   
   const ovulationDay = new Date(predictedStart.getTime() - 14 * 24 * 60 * 60 * 1000);
   const ovulationWindow = [
-      (new Date(ovulationDay.getTime() - 2 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
-      (new Date(ovulationDay.getTime() + 2 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+    (new Date(ovulationDay.getTime() - 2 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0],
+    (new Date(ovulationDay.getTime() + 2 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
   ];
   return {
     predictedPeriod: {
@@ -170,39 +171,39 @@ export default function Home() {
   };
 
   const getPredictionUI = () => {
-    if (predictions?.predictedOvulation && periodRanges.length >= 2) {
-      const ovulationStart = new Date(predictions.predictedOvulation[0]);
-      const diffTime = ovulationStart.getTime() - today.getTime();
-      const daysUntilOvulation = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (predictions?.predictedOvulation && periodRanges.length >= 2) {
+          const ovulationStart = new Date(predictions.predictedOvulation[0]);
+          const diffTime = ovulationStart.getTime() - today.getTime();
+          const daysUntilOvulation = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          return (
+            <View style={styles.predictionSection}>
+                <Text style={styles.predictionText}>Best chances of conceiving are in</Text>
+                <Text style={styles.predictionDays}>{daysUntilOvulation} days</Text>
+                <TouchableOpacity style={styles.editButton} onPress={() => router.push("/(main)/calenderScreen")}>
+                    <Text style={styles.editButtonText}>Edit period dates</Text>
+                </TouchableOpacity>
+            </View>
+          );
+      }
       return (
-          <View style={styles.predictionSection}>
-              <Text style={styles.predictionText}>Best chances of conceiving are in</Text>
-              <Text style={styles.predictionDays}>{daysUntilOvulation} days</Text>
-              <TouchableOpacity style={styles.editButton} onPress={() => router.push("/(main)/calenderScreen")}>
-                  <Text style={styles.editButtonText}>Edit period dates</Text>
+          <View style={styles.ctaBox}>
+              <Text style={styles.ctaText}>
+                  Log the first day of your last period{"\n"}to make better predictions
+              </Text>
+              <TouchableOpacity
+                  style={styles.logButton}
+                  onPress={() => {
+                      if (selectedDay > today) {
+                          Alert.alert("Invalid Date", "You cannot log a future date.");
+                      } else {
+                          handleLogPeriod();
+                      }
+                  }}
+              >
+                  <Text style={styles.logButtonText}>Log period</Text>
               </TouchableOpacity>
           </View>
       );
-    }
-    return (
-      <View style={styles.ctaBox}>
-          <Text style={styles.ctaText}>
-              Log the first day of your last period{"\n"}to make better predictions
-          </Text>
-          <TouchableOpacity
-              style={styles.logButton}
-              onPress={() => {
-                  if (selectedDay > today) {
-                      Alert.alert("Invalid Date", "You cannot log a future date.");
-                  } else {
-                      handleLogPeriod();
-                  }
-              }}
-          >
-              <Text style={styles.logButtonText}>Log period</Text>
-          </TouchableOpacity>
-      </View>
-    );
   };
 
   const handleLogPeriod = () => {
@@ -217,7 +218,7 @@ export default function Home() {
     <>
       <View style={styles.calendarTopBar}>
         <View style={styles.lottieContainer}>
-          <TouchableOpacity onPress={() => router.push("/setting")}>
+          <TouchableOpacity onPress={() => router.push("/(main)/settings")}>
             <LottieView
               source={require("@/anim/wired-lineal-269-avatar-female-hover-glance.json")}
               style={{ width: 40, height: 40 }}
@@ -269,44 +270,142 @@ export default function Home() {
   );
 
   const renderContent = () => (
-    <>
-      <View>
-        <Text style={styles.sectionTitle}>My daily insights · Today</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12, paddingLeft: 16 }}>
-          <TouchableOpacity style={styles.card}>
+    <ScrollView style={styles.contentContainer}>
+      <Text style={styles.sectionTitle}>My daily insights · Today</Text>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 12, paddingLeft: 16 }}>
+        <TouchableOpacity style={styles.card}>
+          <View style={styles.cardIconContainer}>
             <Ionicons name="add-circle" size={32} color="#ef5da8" />
-            <Text style={styles.cardTitle}>Log your symptoms</Text>
-          </TouchableOpacity>
-          <View style={[styles.card, { backgroundColor: "#fff0f0" }]}>
-            <Image source={{ uri: "https://via.placeholder.com/150x80.png?text=Pregnancy" }} style={styles.cardImage} />
-            <Text style={styles.cardText}>9 early signs of pregnancy</Text>
           </View>
-          <View style={[styles.card, { backgroundColor: "#eef6ff" }]}>
-            <Text style={styles.cardTitle}>3 REASONS</Text>
-            <Text style={styles.cardText}>to Log Your Period</Text>
+          <Text style={styles.cardTitle}>Log your symptoms</Text>
+        </TouchableOpacity>
+        <View style={[styles.card, { backgroundColor: "#fff0f0" }]}>
+          <Image source={require("@/assets/images/new.png")} style={styles.cardImage} />
+          <Text style={styles.cardTitle}>Today's sex superpower</Text>
+          <Text style={styles.cardSubtitle}>Your period</Text>
+        </View>
+        <View style={[styles.card, { backgroundColor: "#eef6ff" }]}>
+          <Image source={require("@/assets/images/period.png")} style={styles.cardImage} />
+          <Text style={styles.cardTitle}>Today's chance of pregnancy</Text>
+          <Text style={styles.cardSubtitle}>Updating ...</Text>
+        </View>
+        <TouchableOpacity style={[styles.card, { backgroundColor: "#e8fdf2" }]}>
+          <Image source={require("@/assets/images/img.png")} style={styles.cardImage} />
+          <Text style={styles.cardTitle}>September Symptom report</Text>
+          <Text style={styles.cardSubtitle}>Explore now</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>During your period</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ paddingLeft: 16 }}>
+          <View style={styles.infoCard}>
+            <Image source={require("@/assets/images/period.png")} style={styles.infoCardImage} />
+            <View style={styles.infoCardContent}>
+              <Text style={styles.infoCardTitle}>Coping with cramps</Text>
+              <View style={styles.infoCardItem}>
+                <Ionicons name="bulb-outline" size={16} color="#4b0082" />
+                <Text style={styles.infoCardText}>Quick pain relief tips</Text>
+              </View>
+              <View style={styles.infoCardItem}>
+                <Ionicons name="heart-outline" size={16} color="#4b0082" />
+                <Text style={styles.infoCardText}>What's causing your cramps</Text>
+              </View>
+              <View style={styles.infoCardItem}>
+                <Ionicons name="medical-outline" size={16} color="#4b0082" />
+                <Text style={styles.infoCardText}>When to see a doctor</Text>
+              </View>
+              <TouchableOpacity style={styles.infoCardButton}>
+                <Text style={styles.infoCardButtonText}>Manage the pain</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </ScrollView>
       </View>
 
-      <View style={styles.searchSection}>
-        <Text style={styles.sectionTitle}>Picked for you</Text>
-        <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={20} color="#666" />
-          <TextInput placeholder="Search articles, videos and more" style={styles.searchInput} />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Symptom Checker</Text>
+        <TouchableOpacity style={styles.pcosCard} onPress={() => router.push('/(main)/pcosChecker')} > 
+          <Ionicons name="warning-outline" size={24} color="#f43f5e" />
+          <Text style={styles.pcosText}>
+            Up to 70% of people with polycystic ovary syndrome (PCOS) don't know for sure that they have it
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.pcosAssessmentCard}
+          onPress={() => router.push('/(main)/pcosChecker')}
+          activeOpacity={0.8}
+        >
+          <View style={styles.pcosAssessmentIcon}>
+            <Ionicons name="clipboard-outline" size={24} color="#f43f5e" />
+          </View>
+          <View style={styles.pcosAssessmentTextContainer}>
+            <Text style={styles.pcosAssessmentTitle}>PCOS self-assessment</Text>
+            <View style={styles.pcosAssessmentTime}>
+              <Ionicons name="time-outline" size={16} color="#666" />
+              <Text style={styles.pcosAssessmentTimeText}>Typically 5 min</Text>
+            </View>
+          </View>
+          <View style={styles.pcosAssessmentArrow}>
+            <Ionicons name="arrow-forward" size={24} color="#f43f5e" />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>My cycles</Text>
+        <View style={styles.cyclesContainer}>
+          <TouchableOpacity style={styles.cycleInfoCard}>
+            <Text style={styles.cycleInfoTitle}>Previous cycle length</Text>
+            <View style={styles.cycleInfoStatus}>
+              <Ionicons name="warning-outline" size={16} color="#ffc107" />
+              <Text style={styles.cycleInfoText}>ABNORMAL</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cycleInfoCard}>
+            <Text style={styles.cycleInfoTitle}>Previous period length</Text>
+            <View style={styles.cycleInfoStatus}>
+              <Ionicons name="checkmark-circle-outline" size={16} color="#4caf50" />
+              <Text style={styles.cycleInfoText}>NORMAL</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.cycleInfoCard}>
+            <Text style={styles.cycleInfoTitle}>Cycle length variation</Text>
+            <View style={styles.cycleInfoStatus}>
+              <Ionicons name="warning-outline" size={16} color="#ffc107" />
+              <Text style={styles.cycleInfoText}>IRREGULAR</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity style={styles.logRecentPeriodsButton}>
+          <Text style={styles.logRecentPeriodsButtonText}>Log recent periods</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>My symptom patterns</Text>
+        <View style={styles.symptomPatternCard}>
+          <Text style={styles.symptomPatternText}>
+            Get to know your body better. By logging symptoms, you'll be able to spot patterns across multiple cycles and get insights verified by medical experts.
+          </Text>
+          <Image source={require("@/assets/images/calendar.png")} style={styles.symptomPatternImage} />
         </View>
       </View>
-    </>
+
+    </ScrollView>
   );
 
   return (
     <LinearGradient colors={["#fff", "#fdf2f8"]} style={styles.container}>
-      <FlatList
-        data={[]}
-        renderItem={null}
-        ListHeaderComponent={renderHeader}
-        ListFooterComponent={renderContent}
-        showsVerticalScrollIndicator={false}
-      />
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          data={[]}
+          renderItem={() => null}
+          ListHeaderComponent={renderHeader}
+          ListFooterComponent={renderContent}
+          showsVerticalScrollIndicator={false}
+        />
+      </SafeAreaView>
 
       <Modal
         transparent
@@ -348,7 +447,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 10, 
     paddingBottom: 10,
   },
   lottieContainer: {
@@ -396,6 +495,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+  contentContainer: {
+    paddingBottom: 50,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
@@ -411,27 +513,44 @@ const styles = StyleSheet.create({
     padding: 15,
     marginRight: 10,
     justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardIconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
   },
   cardTitle: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#333",
     marginTop: 10,
+    textAlign: 'center',
   },
-  cardText: {
+  cardSubtitle: {
     fontSize: 12,
     color: "#666",
     marginTop: 4,
+    textAlign: 'center',
   },
   cardImage: {
     width: "100%",
     height: 80,
     borderRadius: 10,
+    marginBottom: 8,
   },
-  searchSection: {
-    paddingHorizontal: 20,
+  section: {
     marginTop: 20,
-    marginBottom: 50,
+    paddingHorizontal: 20,
   },
   searchBar: {
     flexDirection: "row",
@@ -511,5 +630,174 @@ const styles = StyleSheet.create({
   editButtonText: {
     color: "#f43f5e",
     fontWeight: "600",
+  },
+  infoCard: {
+    flexDirection: 'row',
+    backgroundColor: '#4b0082',
+    borderRadius: 16,
+    marginTop: 12,
+    overflow: 'hidden',
+    padding: 20,
+    width: 300,
+  },
+  infoCardImage: {
+    width: 100,
+    height: '100%',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    opacity: 0.3,
+  },
+  infoCardContent: {
+    flex: 1,
+  },
+  infoCardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  infoCardItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  infoCardText: {
+    color: '#fff',
+    marginLeft: 8,
+    fontSize: 14,
+  },
+  infoCardButton: {
+    backgroundColor: '#fff',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginTop: 15,
+    alignSelf: 'flex-start',
+  },
+  infoCardButtonText: {
+    color: '#4b0082',
+    fontWeight: 'bold',
+  },
+  cyclesContainer: {
+    marginTop: 12,
+  },
+  cycleInfoCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 16,
+    marginBottom: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cycleInfoTitle: {
+    fontSize: 16,
+    color: '#333',
+  },
+  cycleInfoStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cycleInfoText: {
+    marginLeft: 5,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#666',
+  },
+  logRecentPeriodsButton: {
+    backgroundColor: '#f43f5e',
+    paddingVertical: 12,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logRecentPeriodsButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  symptomPatternCard: {
+    backgroundColor: '#fdf2f8',
+    borderRadius: 16,
+    padding: 20,
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  symptomPatternText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 15,
+  },
+  symptomPatternImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    resizeMode: 'contain',
+  },
+  pcosCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff0f0',
+    borderRadius: 16,
+    padding: 15,
+    marginTop: 12,
+  },
+  pcosText: {
+    fontSize: 14,
+    color: '#f43f5e',
+    fontWeight: '500',
+    marginLeft: 10,
+    flex: 1,
+  },
+  pcosAssessmentCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 15,
+    marginTop: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    justifyContent: 'space-between',
+  },
+  pcosAssessmentIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#fde3f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  pcosAssessmentTextContainer: {
+    flex: 1,
+  },
+  pcosAssessmentTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  pcosAssessmentTime: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  pcosAssessmentTimeText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 5,
+  },
+  pcosAssessmentArrow: {
+    marginLeft: 15,
   },
 });
