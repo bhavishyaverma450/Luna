@@ -1,21 +1,21 @@
-// This is the code you provided, which is already correct.
-const express = require('express');
+// File: routes/comments.js
+const express = require("express");
 const router = express.Router();
-const Comment = require('../models/Comment');
-const User = require('../models/User');
+const Comment = require("../models/Comment");
+const User = require("../models/User");
 
 // Get comments for a specific article
-router.get('/:articleId/comments', async (req, res) => {
+router.get("/:articleId/comments", async (req, res) => {
   try {
     const { articleId } = req.params;
     const comments = await Comment.find({ articleId: Number(articleId) })
-      .populate('userId', 'name')
+      .populate("userId", "name")
       .sort({ timestamp: -1 });
 
-    const formattedComments = comments.map(comment => ({
+    const formattedComments = comments.map((comment) => ({
       _id: comment._id,
-      // Corrected logic: checks if userId is not null before accessing its properties
-      userId: comment.userId ? comment.userId._id : null, 
+      articleId: comment.articleId,
+      userId: comment.userId ? comment.userId._id : null,
       user: { name: comment.userId ? comment.userId.name : "Deleted User" },
       text: comment.text,
       timestamp: comment.timestamp.toISOString(),
@@ -29,33 +29,29 @@ router.get('/:articleId/comments', async (req, res) => {
 });
 
 // Post a new comment
-router.post('/:articleId/comments', async (req, res) => {
-  const io = req.app.get('io');
+router.post("/:articleId/comments", async (req, res) => {
+  const io = req.app.get("io");
   try {
     const { articleId } = req.params;
     const { userId, text } = req.body;
 
-    // First, verify the user exists
+    // Verify user exists
     const user = await User.findById(userId);
     if (!user) {
-      // If the user ID is invalid or not found, send an error and stop execution
-      return res.status(404).json({ message: "User not found with the provided ID." });
+      return res
+        .status(404)
+        .json({ message: "User not found with the provided ID." });
     }
 
     const newComment = new Comment({
       articleId: Number(articleId),
-      userId: userId,
-      text: text,
+      userId,
+      text,
     });
     await newComment.save();
 
-    // Now populate the user data for the response
-    const populatedComment = await newComment.populate('userId', 'name');
-    
-    // Check if population was successful before accessing properties
-    if (!populatedComment || !populatedComment.userId) {
-        return res.status(500).json({ message: "Failed to populate user data." });
-    }
+    // Populate user
+    const populatedComment = await newComment.populate("userId", "name");
 
     const formattedComment = {
       _id: populatedComment._id,
@@ -66,9 +62,11 @@ router.post('/:articleId/comments', async (req, res) => {
       timestamp: populatedComment.timestamp.toISOString(),
     };
 
-    io.emit('new_comment', formattedComment);
+    // 🔥 Emit to all clients
+    io.emit("new_comment", formattedComment);
 
-    res.status(201).json({ message: "Comment submitted successfully" });
+    // 🔥 Send the full comment object back to the user
+    res.status(201).json(formattedComment);
   } catch (err) {
     console.error("Failed to submit comment:", err);
     res.status(500).json({ message: "Server error" });

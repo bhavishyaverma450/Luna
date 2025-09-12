@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSettings } from "../../contexts/settingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 const settingsOptions = [
   { id: 1, label: "Report for a doctor", icon: "folder", lib: "Feather" },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View, TextInput, Text, TouchableOpacity, StyleSheet,
   KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback,
@@ -16,15 +16,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        router.replace('/(main)');
-      }
-    };
-    checkLogin();
-  }, []);
+  // Removed useEffect for auto-login. The user must now log in via the backend.
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -52,7 +44,7 @@ export default function Login() {
         await AsyncStorage.setItem('userName', data.name);
         await AsyncStorage.setItem('userEmail', email);
 
-        router.replace('/(main)');
+        router.replace('/(main)/tabs');
       } else {
         Alert.alert('Login Failed', 'No token or user ID received from server');
       }

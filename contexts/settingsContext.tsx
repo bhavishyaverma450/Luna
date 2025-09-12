@@ -1,89 +1,70 @@
-// settingsContext.tsx
-import React, { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+// ./contexts/SettingsContext.tsx
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Appearance } from 'react-native';
 
-const API_BASE = "http://192.168.1.6:5000/api/settings"; // match backend
-
-interface SettingsState {
+interface Settings {
   appLockEnabled: boolean;
   biometricEnabled: boolean;
-  appAppearance: "light" | "dark" | "automatic";
+  appAppearance: 'light' | 'dark' | 'automatic';
   hideAppIcon: boolean;
-  notifications: boolean;
-  darkMode: boolean;
-  autoUpdate: boolean;
-  dataSharing: boolean;
-  personalizedAds: boolean;
-  analytics: boolean;
-  appPrivacy: boolean;
 }
 
-interface SettingsContextType {
-  settings: SettingsState;
-  loading: boolean;
-  updateSetting: (key: keyof SettingsState, value: any) => Promise<void>;
-}
-
-const defaultSettings: SettingsState = {
+const defaultSettings: Settings = {
   appLockEnabled: false,
   biometricEnabled: false,
-  appAppearance: "automatic",
+  appAppearance: 'automatic',
   hideAppIcon: false,
-  notifications: true,
-  darkMode: false,
-  autoUpdate: true,
-  dataSharing: false,
-  personalizedAds: false,
-  analytics: true,
-  appPrivacy: false,
 };
+
+interface SettingsContextType {
+  settings: Settings;
+  updateSetting: (key: keyof Settings, value: any) => Promise<void>;
+  isSettingsLoading: boolean;
+}
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
-export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<SettingsState>(defaultSettings);
-  const [loading, setLoading] = useState(true);
-
-  const fetchSettings = async () => {
-    try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) return;
-
-      const response = await axios.get(API_BASE, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSettings({ ...defaultSettings, ...response.data });
-    } catch (err) {
-      console.error("❌ Failed to fetch settings:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
+export const SettingsProvider = ({ children }: { children: React.ReactNode }) => {
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [isSettingsLoading, setIsSettingsLoading] = useState(true);
 
   useEffect(() => {
-    fetchSettings();
+    const loadSettings = async () => {
+      try {
+        const storedSettings = await AsyncStorage.getItem('appSettings');
+        if (storedSettings) {
+          const parsedSettings = JSON.parse(storedSettings);
+          setSettings(parsedSettings);
+        }
+      } catch (error) {
+        console.error('Failed to load settings from storage:', error);
+      } finally {
+        setIsSettingsLoading(false);
+      }
+    };
+    loadSettings();
   }, []);
 
-  const updateSetting = async (key: keyof SettingsState, value: any) => {
-    const updated = { ...settings, [key]: value };
-    setSettings(updated);
-
+  const updateSetting = useCallback(async (key: keyof Settings, value: any) => {
+    const newSettings = { ...settings, [key]: value };
+    setSettings(newSettings);
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      if (!token) throw new Error("No token");
-
-      await axios.put(`${API_BASE}/update`, updated, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-    } catch (err) {
-      console.error("❌ Failed to save settings:", err);
-      setSettings(settings);
+      await AsyncStorage.setItem('appSettings', JSON.stringify(newSettings));
+      if (key === 'appAppearance') {
+        if (value === 'automatic') {
+          Appearance.setColorScheme(null);
+        } else {
+          Appearance.setColorScheme(value);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to save settings to storage:', error);
     }
-  };
+  }, [settings]);
 
   return (
-    <SettingsContext.Provider value={{ settings, loading, updateSetting }}>
+    <SettingsContext.Provider value={{ settings, updateSetting, isSettingsLoading }}>
       {children}
     </SettingsContext.Provider>
   );
@@ -91,8 +72,8 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 
 export const useSettings = () => {
   const context = useContext(SettingsContext);
-  if (!context) {
-    throw new Error("useSettings must be used inside SettingsProvider");
+  if (context === undefined) {
+    throw new Error('useSettings must be used within a SettingsProvider');
   }
   return context;
 };

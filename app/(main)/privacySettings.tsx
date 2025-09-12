@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
-import { useSettings } from "../../contexts/settingsContext"; // Import the hook
+import { useSettings } from "../../contexts/SettingsContext"; // Import the hook
 
 export default function PrivacySettings() {
   const router = useRouter();

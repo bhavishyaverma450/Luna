@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSettings } from "../../contexts/settingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 // You do not need to import expo-app-icon here, it's globally available
 // as part of the expo-updates package with the correct configuration.
@@ -57,16 +57,12 @@ export default function AppLockScreen() {
 
   const handleAppearanceChange = (value: "light" | "dark" | "automatic") => {
     updateSetting("appAppearance", value);
-    if (value === "light" || value === "dark") {
-      // Appearance.setColorSchemeAsync is not a standard React Native API
-      // It might be available through other Expo modules or custom implementations
-    }
+    // The settings context now handles setting the color scheme
   };
 
   const handleHideAppIconToggle = async (value: boolean) => {
     try {
       if (value) {
-        // The module is available globally on native
         // @ts-ignore
         await expo.appIcon.setAppIcon('hidden');
         Alert.alert("App Icon Hidden", "The app icon has been hidden. To unhide, you may need to open the app via a link or widget.");

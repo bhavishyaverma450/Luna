@@ -3,21 +3,21 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const http = require('http'); // Import http for Socket.IO
-const { Server } = require("socket.io"); // Import Server class
+const http = require('http');
+const { Server } = require("socket.io");
 
 dotenv.config();
 
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
-const articlesRoutes = require('./routes/articles'); // <-- NEW
+const articlesRoutes = require('./routes/articles');
+const commentsRoutes = require("./routes/comments");
+
 const Room = require('./models/Room');
 const Message = require('./models/Message');
 const User = require('./models/User');
-
-// New models for articles
-const Article = require('./models/Article'); // <-- NEW
-const Comment = require('./models/Comment'); // <-- NEW
+const Article = require('./models/Article');
+const Comment = require('./models/Comment');
 
 const app = express();
 const server = http.createServer(app);
@@ -40,7 +40,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.log('❌ MongoDB connection error:', err));
 
 const initDb = async () => {
-  // Initialize rooms and dummy user
   const roomCount = await Room.countDocuments();
   if (roomCount === 0) {
     const initialRooms = [
@@ -58,8 +57,7 @@ const initDb = async () => {
     await User.create({ name: 'AnonymousUser', email: 'anon@example.com', password: 'hashedpassword' });
     console.log("Dummy user created.");
   }
-  
-  // Seed articles on startup
+
   const articleCount = await Article.countDocuments();
   if (articleCount === 0) {
     const initialArticles = [
@@ -78,12 +76,10 @@ const initDb = async () => {
 // --- Socket.IO Events ---
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
-
   socket.on('join', (data) => {
     socket.join(data.room);
     console.log(`${data.username} has joined room ${data.room}`);
   });
-
   socket.on('send_message', async (data) => {
     const { roomId, userId, text } = data;
     try {
@@ -105,7 +101,6 @@ io.on('connection', (socket) => {
       console.error("Error saving/broadcasting message:", error);
     }
   });
-
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
@@ -114,7 +109,8 @@ io.on('connection', (socket) => {
 // --- API Routes ---
 app.use('/api/auth', authRoutes);
 app.use('/api/chats', chatRoutes);
-app.use('/api/articles', articlesRoutes); // <-- NEW
+app.use('/api/articles', articlesRoutes);
+app.use("/api/articles", commentsRoutes);
 
 app.get('/', (req, res) => res.send('🚀 Luna backend running...'));
 

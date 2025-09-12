@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.11.0",
     "bcrypt": "^6.0.0",
+    "dayjs": "^1.11.18",
     "expo": "~53.0.22",
     "expo-blur": "~14.1.5",
     "expo-constants": "~17.1.7",

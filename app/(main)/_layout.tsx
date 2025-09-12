@@ -3,6 +3,8 @@ import { Tabs, Stack, useRouter } from 'expo-router';
 import { Ionicons } from "@expo/vector-icons";
 import { View, Text, TouchableOpacity } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { AppLockWrapper } from '@/components/AppLockWrapper';
+import { SettingsProvider } from '@/contexts/SettingsContext';
 
 export default function TabLayout() {
   const router = useRouter();
@@ -12,9 +14,13 @@ export default function TabLayout() {
   };
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="tabs" options={{ headerShown: false }} />
-      <Stack.Screen name="settings" options={{ presentation: 'modal', title: 'Settings' }} />
-    </Stack>
+    <SettingsProvider>
+      <AppLockWrapper>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="tabs" options={{ headerShown: false }} />
+          <Stack.Screen name="settings" options={{ presentation: 'modal', title: 'Settings' }} />
+        </Stack>
+      </AppLockWrapper>
+    </SettingsProvider>
   );
 }

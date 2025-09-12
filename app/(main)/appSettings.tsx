@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from "react-native";
-import { useSettings } from "../../contexts/settingsContext";
+import { useSettings } from "../../contexts/SettingsContext";
 
 export default function AppSettings() {
   const router = useRouter();

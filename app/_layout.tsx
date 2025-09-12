@@ -1,9 +1,9 @@
 // app/_layout.tsx
-import React from "react";
 import { Stack } from "expo-router";
+import React from "react";
 import { Provider } from "react-redux";
+import { SettingsProvider } from "../contexts/SettingsContext";
 import store from "../redux/store";
-import { SettingsProvider } from "../contexts/settingsContext";
 
 export default function RootLayout() {
   return (
