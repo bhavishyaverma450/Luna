@@ -6,7 +6,7 @@ import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Appearance,
+  Platform,
   StyleSheet,
   Switch,
   Text,
@@ -15,9 +15,6 @@ import {
 } from "react-native";
 import { useSettings } from "../../contexts/SettingsContext";
 
-// You do not need to import expo-app-icon here, it's globally available
-// as part of the expo-updates package with the correct configuration.
-
 export default function AppLockScreen() {
   const router = useRouter();
   const { settings, updateSetting } = useSettings();
@@ -25,18 +22,24 @@ export default function AppLockScreen() {
 
   useEffect(() => {
     (async () => {
-      const compatible = await LocalAuthentication.hasHardwareAsync();
-      setBiometricSupported(compatible);
+      try {
+        const compatible = await LocalAuthentication.hasHardwareAsync();
+        setBiometricSupported(compatible);
+      } catch (e) {
+        console.warn("Biometric check failed:", e);
+        setBiometricSupported(false);
+      }
     })();
   }, []);
 
+  // Toggle App Lock
   const handleAppLockToggle = async (value: boolean) => {
     if (value) {
       const enrolled = await LocalAuthentication.isEnrolledAsync();
       if (!enrolled) {
         Alert.alert(
           "App Lock",
-          "No biometrics or passcode enrolled on your device. Please set one up in your device settings."
+          "No biometrics or passcode enrolled. Please set one up in your device settings."
         );
         return;
       }
@@ -44,36 +47,49 @@ export default function AppLockScreen() {
     updateSetting("appLockEnabled", value);
   };
 
+  // Toggle Biometrics
   const handleBiometricToggle = async (value: boolean) => {
     if (value) {
       const enrolled = await LocalAuthentication.isEnrolledAsync();
       if (!enrolled) {
-        Alert.alert("Biometric", "No biometrics enrolled on your device. Please set one up in your device settings.");
+        Alert.alert(
+          "Biometric",
+          "No biometrics enrolled on your device. Please set one up in settings."
+        );
         return;
       }
     }
     updateSetting("biometricEnabled", value);
   };
 
+  // Change Appearance
   const handleAppearanceChange = (value: "light" | "dark" | "automatic") => {
     updateSetting("appAppearance", value);
-    // The settings context now handles setting the color scheme
   };
 
+  // Hide / Show App Icon
   const handleHideAppIconToggle = async (value: boolean) => {
+    if (Platform.OS !== "ios") {
+      Alert.alert("Not Supported", "Hiding the app icon is only supported on iOS.");
+      return;
+    }
+
     try {
+      // @ts-expect-error Expo App Icon API
+      await expo.appIcon.setAppIcon(value ? "hidden" : "default");
       if (value) {
-        // @ts-ignore
-        await expo.appIcon.setAppIcon('hidden');
-        Alert.alert("App Icon Hidden", "The app icon has been hidden. To unhide, you may need to open the app via a link or widget.");
-      } else {
-        // @ts-ignore
-        await expo.appIcon.setAppIcon('default');
+        Alert.alert(
+          "App Icon Hidden",
+          "The app icon has been hidden. To unhide, use a link or widget."
+        );
       }
       updateSetting("hideAppIcon", value);
     } catch (e) {
       console.error("Failed to change app icon:", e);
-      Alert.alert("Error", "Could not change app icon. This feature may not be supported on your device or requires additional configuration.");
+      Alert.alert(
+        "Error",
+        "Could not change app icon. This feature may not be supported or requires config."
+      );
     }
   };
 
@@ -88,7 +104,7 @@ export default function AppLockScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      {/* App Lock Section */}
+      {/* App Lock */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>App Lock</Text>
         <View style={styles.optionRow}>
@@ -103,7 +119,7 @@ export default function AppLockScreen() {
         </View>
       </View>
 
-      {/* Biometric Section */}
+      {/* Biometric */}
       {settings.appLockEnabled && (
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>Biometric Authentication</Text>
@@ -126,7 +142,7 @@ export default function AppLockScreen() {
         </View>
       )}
 
-      {/* App Appearance Section */}
+      {/* Appearance */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>App Appearance</Text>
         {(["light", "dark", "automatic"] as const).map((mode) => (
@@ -145,7 +161,7 @@ export default function AppLockScreen() {
         ))}
       </View>
 
-      {/* Hide App Icon Section */}
+      {/* App Icon */}
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>App Icon</Text>
         <View style={styles.optionRow}>
@@ -175,9 +191,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 22, fontWeight: "700", color: "#333" },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 15,
+    borderRadius: 16,
     padding: 20,
-    marginBottom: 15,
+    marginBottom: 16,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,

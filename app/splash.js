@@ -1,6 +1,6 @@
 // Splash.js
 import React, { useEffect } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
@@ -19,7 +19,7 @@ export default function Splash() {
       }
     };
 
-    const timer = setTimeout(checkLogin, 1200);
+    const timer = setTimeout(checkLogin, 1500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -31,8 +31,12 @@ export default function Splash() {
         autoPlay
         loop={false} 
         style={styles.lottie}
-        onAnimationFinish={() => {}}
       />
+      {/* App name */}
+      <Text style={styles.appName}>Luna</Text>
+      <Text style={styles.appSubtitle}>
+        Your safe space to track, connect, and learn
+      </Text>
     </View>
   );
 }
@@ -42,10 +46,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E0F7FA',
+    backgroundColor: '#fdf2f8', 
+    paddingHorizontal: 24,
   },
   lottie: {
-    width: 200, // Adjust size as needed
-    height: 200,
+    width: 220,
+    height: 220,
+  },
+  appName: {
+    marginTop: 18,
+    fontSize: 34,
+    fontWeight: 'bold',
+    color: '#ef5da8', // soft violet accent
+    letterSpacing: 1,
+  },
+  appSubtitle: {
+    marginTop: 8,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#6B7280', // subtle gray text
+    textAlign: 'center',
+    lineHeight: 22,
   },
 });
