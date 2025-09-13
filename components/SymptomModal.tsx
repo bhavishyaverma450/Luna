@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     StyleSheet,
     Text,
@@ -9,7 +9,9 @@ import {
     TextInput,
     ScrollView,
     Dimensions,
-    SafeAreaView
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform
 } from "react-native";
 
 interface SymptomModalProps {
@@ -48,7 +50,8 @@ const SymptomModal = ({
 }: SymptomModalProps) => {
     const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>(initialSymptoms);
     const [notes, setNotes] = useState<string>(initialNotes);
-    const { height: screenHeight } = Dimensions.get("window")
+    const scrollViewRef = useRef<ScrollView>(null);
+    const notesInputRef = useRef<TextInput>(null);
 
     useEffect(() => {
         setSelectedSymptoms(initialSymptoms);
@@ -68,6 +71,12 @@ const SymptomModal = ({
             onSave(selectedDate, selectedSymptoms, notes);
         }
         onClose();
+    };
+
+    const scrollToNotes = () => {
+        setTimeout(() => {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+        }, 200); // small delay to allow keyboard animation
     };
 
     const renderSymptomButtons = (symptoms: string[]) => (
@@ -99,38 +108,50 @@ const SymptomModal = ({
         >
             <View style={styles.modalBackground}>
                 <SafeAreaView style={styles.modalContainer}>
-                    <View style={styles.symptomsModalHeader}>
-                        <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                            <Ionicons name="close" size={24} color="#555" />
-                        </TouchableOpacity>
-                        <Text style={styles.symptomsModalTitle}>
-                            {selectedDate ? new Date(selectedDate).toLocaleString("en-us", { month: "long", day: "numeric", year: "numeric" }) : "Log Symptoms"}
-                        </Text>
-                    </View>
-                    <ScrollView style={styles.symptomsModalContent} showsVerticalScrollIndicator={false}>
-                        {Object.entries(symptomCategories).map(([category, symptoms]) => (
-                            <View key={category} style={styles.symptomCategory}>
-                                <Text style={styles.symptomSectionTitle}>{category}</Text>
-                                {renderSymptomButtons(symptoms)}
-                            </View>
-                        ))}
-                        
-                        <View style={styles.notesSection}>
-                          <Text style={styles.symptomSectionTitle}>Notes</Text>
-                          <TextInput
-                              style={styles.notesInput}
-                              placeholder="Add personal notes for the day..."
-                              placeholderTextColor="#a0a0a0"
-                              multiline
-                              value={notes}
-                              onChangeText={setNotes}
-                          />
+                    <KeyboardAvoidingView
+                        style={{ flex: 1 }}
+                        behavior={Platform.OS === "ios" ? "padding" : undefined}
+                    >
+                        <View style={styles.symptomsModalHeader}>
+                            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                                <Ionicons name="close" size={24} color="#555" />
+                            </TouchableOpacity>
+                            <Text style={styles.symptomsModalTitle}>
+                                {selectedDate ? new Date(selectedDate).toLocaleString("en-us", { month: "long", day: "numeric", year: "numeric" }) : "Log Symptoms"}
+                            </Text>
                         </View>
-                        
-                        <TouchableOpacity style={styles.saveSymptomsButton} onPress={handleSave}>
-                            <Text style={styles.saveSymptomsButtonText}>Save Changes</Text>
-                        </TouchableOpacity>
-                    </ScrollView>
+                        <ScrollView
+                            ref={scrollViewRef}
+                            style={styles.symptomsModalContent}
+                            showsVerticalScrollIndicator={false}
+                            keyboardShouldPersistTaps="handled"
+                        >
+                            {Object.entries(symptomCategories).map(([category, symptoms]) => (
+                                <View key={category} style={styles.symptomCategory}>
+                                    <Text style={styles.symptomSectionTitle}>{category}</Text>
+                                    {renderSymptomButtons(symptoms)}
+                                </View>
+                            ))}
+
+                            <View style={styles.notesSection}>
+                                <Text style={styles.symptomSectionTitle}>Notes</Text>
+                                <TextInput
+                                    ref={notesInputRef}
+                                    style={styles.notesInput}
+                                    placeholder="Add personal notes for the day..."
+                                    placeholderTextColor="#a0a0a0"
+                                    multiline
+                                    value={notes}
+                                    onChangeText={setNotes}
+                                    onFocus={scrollToNotes} // 👈 scroll into view when focused
+                                />
+                            </View>
+
+                            <TouchableOpacity style={styles.saveSymptomsButton} onPress={handleSave}>
+                                <Text style={styles.saveSymptomsButtonText}>Save Changes</Text>
+                            </TouchableOpacity>
+                        </ScrollView>
+                    </KeyboardAvoidingView>
                 </SafeAreaView>
             </View>
         </Modal>
@@ -220,7 +241,7 @@ const styles = StyleSheet.create({
         fontWeight: "600",
     },
     notesSection: {
-      marginBottom: 20,
+        marginBottom: 20,
     },
     notesInput: {
         minHeight: 90,

@@ -1,84 +1,156 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Stack } from 'expo-router';
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack } from "expo-router";
+import LottieView from "lottie-react-native";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function CopingWithCrampsScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <Stack.Screen options={{ headerShown: false }} />
       <ScrollView contentContainerStyle={styles.container}>
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Relief Tips 🏃‍♀️</Text>
+        {/* Header */}
+        <LinearGradient
+          colors={["#fecdd3", "#fda4af"]}
+          style={styles.headerWrapper}
+        >
+          <Text style={styles.headerTitle}>Coping with Cramps 💕</Text>
+        </LinearGradient>
+
+        {/* Quick Relief Tips */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Quick Relief Tips 🏃‍♀️</Text>
           <Text style={styles.paragraph}>
-            When cramps hit, quick relief is often all you want. Here are a few simple things you can try right now:
+            When cramps hit, quick relief is often all you want. Try these simple
+            remedies right away:
           </Text>
+
           <View style={styles.tipContainer}>
-            <Ionicons name="thermometer-outline" size={24} color="#f43f5e" style={styles.tipIcon} />
+            <Ionicons
+              name="thermometer-outline"
+              size={26}
+              color="#e11d48"
+              style={styles.tipIcon}
+            />
             <View style={styles.tipContent}>
               <Text style={styles.tipTitle}>Apply Heat</Text>
               <Text style={styles.tipText}>
-                Place a heating pad or hot water bottle on your lower abdomen or lower back. Heat helps relax the muscles that are cramping. A warm bath can also be very effective.
+                Use a heating pad or hot water bottle on your belly or lower
+                back. Warm baths also help relax muscles.
               </Text>
             </View>
           </View>
+
           <View style={styles.tipContainer}>
-            <Ionicons name="walk-outline" size={24} color="#f43f5e" style={styles.tipIcon} />
+            <Ionicons
+              name="walk-outline"
+              size={26}
+              color="#e11d48"
+              style={styles.tipIcon}
+            />
             <View style={styles.tipContent}>
               <Text style={styles.tipTitle}>Light Exercise</Text>
               <Text style={styles.tipText}>
-                Gentle movements like walking, stretching, or light yoga can increase blood flow and reduce pain. Try a few simple stretches for your back and hips.
+                Gentle walking, stretching, or yoga can increase blood flow and
+                ease pain.
               </Text>
             </View>
           </View>
+
           <View style={styles.tipContainer}>
-            <Ionicons name="medical-outline" size={24} color="#f43f5e" style={styles.tipIcon} />
+            <Ionicons
+              name="medical-outline"
+              size={26}
+              color="#e11d48"
+              style={styles.tipIcon}
+            />
             <View style={styles.tipContent}>
               <Text style={styles.tipTitle}>Massage</Text>
               <Text style={styles.tipText}>
-                Gently massaging your lower belly in a circular motion can help ease tension and discomfort.
+                A gentle circular massage on your belly can release tension and
+                reduce cramps.
               </Text>
             </View>
           </View>
+
           <View style={styles.tipContainer}>
-            <Ionicons name="water-outline" size={24} color="#f43f5e" style={styles.tipIcon} />
+            <Ionicons
+              name="water-outline"
+              size={26}
+              color="#e11d48"
+              style={styles.tipIcon}
+            />
             <View style={styles.tipContent}>
               <Text style={styles.tipTitle}>Stay Hydrated</Text>
               <Text style={styles.tipText}>
-                Drinking plenty of water is essential. Dehydration can sometimes make cramps worse.
+                Drink plenty of water — dehydration can worsen cramps.
               </Text>
             </View>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>What Causes Cramps? 🤔</Text>
+        {/* What Causes Cramps */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>What Causes Cramps? 🤔</Text>
           <Text style={styles.paragraph}>
-            Period cramps, also known as **dysmenorrhea**, are caused by **prostaglandins**, which are hormone-like substances released by your uterine lining during your period. They cause the muscles of your uterus to contract and shed its lining. The more prostaglandins your body produces, the more intense your cramps may be.
+            Period cramps (also called{" "}
+            <Text style={styles.highlight}>dysmenorrhea</Text>) are caused by{" "}
+            <Text style={styles.highlight}>prostaglandins</Text>, hormone-like
+            substances that make your uterus contract and shed its lining. More
+            prostaglandins = stronger cramps.
           </Text>
           <Text style={styles.paragraph}>
-            While cramps are a normal part of the menstrual cycle, there are other factors that can influence their severity, including:
+            Severity can also be influenced by:
           </Text>
           <View style={styles.list}>
-            <Text style={styles.listItem}>• Age: Younger people often experience more severe cramps.</Text>
-            <Text style={styles.listItem}>• Lifestyle: Diet, stress, and exercise habits can play a role.</Text>
-            <Text style={styles.listItem}>• Underlying Conditions: Conditions like endometriosis or fibroids can lead to more painful cramps.</Text>
+            <Text style={styles.listItem}>• Age – younger people often feel them more strongly</Text>
+            <Text style={styles.listItem}>• Lifestyle – diet, stress, and exercise matter</Text>
+            <Text style={styles.listItem}>
+              • Underlying Conditions – such as endometriosis or fibroids
+            </Text>
           </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>When to See a Doctor 👩‍⚕️</Text>
+        {/* Animation */}
+        <View style={styles.card}>
+          <LottieView
+            source={require("@/anim/calendar - woman.json")}
+            style={{ height: 200 }}
+            autoPlay
+            loop
+          />
+        </View>
+
+        {/* When to See a Doctor */}
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>When to See a Doctor 👩‍⚕️</Text>
           <Text style={styles.paragraph}>
-            Most period cramps are manageable at home, but you should consult a healthcare professional if you experience:
+            Cramps are normal, but seek medical advice if you notice:
           </Text>
           <View style={styles.list}>
-            <Text style={styles.listItem}>• **Cramps that are so severe** they prevent you from going about your daily activities.</Text>
-            <Text style={styles.listItem}>• Pain that gets **progressively worse** over time or is not relieved by over-the-counter medication.</Text>
-            <Text style={styles.listItem}>• Cramps accompanied by **heavy bleeding or large blood clots**.</Text>
-            <Text style={styles.listItem}>• Pain that occurs at times other than your period.</Text>
+            <Text style={styles.listItem}>
+              • Pain so severe it disrupts your daily routine
+            </Text>
+            <Text style={styles.listItem}>
+              • Pain getting worse over time or not relieved by medicine
+            </Text>
+            <Text style={styles.listItem}>
+              • Cramps with heavy bleeding or large blood clots
+            </Text>
+            <Text style={styles.listItem}>
+              • Pain outside your period cycle
+            </Text>
           </View>
           <Text style={styles.paragraph}>
-            Your doctor can help determine the cause and recommend a personalized treatment plan, which might include stronger pain relievers, birth control pills, or other therapies.
+            A doctor can recommend treatments such as stronger pain relief,
+            birth control, or other therapies.
           </Text>
         </View>
       </ScrollView>
@@ -89,63 +161,93 @@ export default function CopingWithCrampsScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff0f6",
   },
   container: {
     padding: 20,
   },
-  section: {
-    marginBottom: 20,
-    backgroundColor: '#fde3f0',
-    padding: 15,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+  headerWrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 18,
+    borderRadius: 16,
+    marginBottom: 25,
+    shadowColor: "#000",
     shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#9f1239",
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  animationCard: {
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 20,
     elevation: 3,
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#be123c",
     marginBottom: 10,
   },
   paragraph: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#555',
+    fontSize: 15,
+    lineHeight: 22,
+    color: "#374151",
     marginBottom: 10,
   },
   tipContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 15,
   },
   tipIcon: {
-    marginRight: 10,
-    marginTop: 4,
+    marginRight: 12,
+    marginTop: 2,
   },
   tipContent: {
     flex: 1,
   },
   tipTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#f43f5e',
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#e11d48",
+    marginBottom: 4,
   },
   tipText: {
     fontSize: 14,
-    color: '#666',
+    color: "#4b5563",
     lineHeight: 20,
   },
   list: {
-    marginLeft: 10,
+    marginLeft: 8,
     marginBottom: 10,
   },
   listItem: {
-    fontSize: 16,
-    color: '#555',
-    lineHeight: 24,
+    fontSize: 15,
+    color: "#444",
+    lineHeight: 22,
+    marginBottom: 4,
+  },
+  highlight: {
+    fontWeight: "600",
+    color: "#dc2626",
   },
 });

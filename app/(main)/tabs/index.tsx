@@ -10,6 +10,7 @@ import {
   Alert,
   Dimensions,
   FlatList,
+  Image,
   Modal,
   ScrollView,
   StyleSheet,
@@ -331,11 +332,15 @@ export default function Home() {
     const ovulationStart = new Date(predictions.predictedOvulation[0]);
     if (isPredictedOvulation(selectedDay)) {
       return (
-        <View style={styles.predictionSection}>
+        <View style={styles.predictionOvulationSection}>
           <Ionicons name="heart-outline" size={28} color="#3f51b5" />
           <Text style={styles.predictionText}>High chance of conceiving!</Text>
-          <TouchableOpacity style={styles.editButton} onPress={() => router.push("/(main)/calenderScreen")}>
-            <Text style={styles.editButtonText}>Edit period dates</Text>
+          <Image
+            source={require('@/assets/images/ovulation.png')}
+            style={{height:150,width:250,marginTop:5}}
+          />          
+          <TouchableOpacity style={styles.editOvulationButton} onPress={() => router.push("/(main)/calenderScreen")}>
+            <Text style={styles.editOvulationButtonText}>Edit period dates</Text>
           </TouchableOpacity>
         </View>
       );
@@ -347,7 +352,9 @@ export default function Home() {
       const daysUntilOvulation = Math.ceil(diffStart / (1000 * 60 * 60 * 24));
       return (
         <View style={styles.predictionSection}>
-          <Ionicons name="sparkles-outline" size={28} color="#f43f5e" />
+          {/* <Ionicons name="sparkles-outline" size={28} color="#f43f5e" /> */}
+          <LottieView source={require('@/anim/Trying.json')} style={{height:100,width:150,marginTop:-30,marginBottom:-20,}}
+          autoPlay loop/>
           <Text style={styles.predictionText}>Best chances of conceiving are in</Text>
           <Text style={styles.predictionDays}>{daysUntilOvulation} days</Text>
           <TouchableOpacity style={styles.editButton} onPress={() => router.push("/(main)/calenderScreen")}>
@@ -617,34 +624,45 @@ export default function Home() {
               </View>
             </TouchableOpacity>
 
-            {/* Hydration is key card */}
             <TouchableOpacity
-              key="hydration-key"
-              style={[styles.infoCard, { backgroundColor: '#3f51b5' }]}
-              onPress={() => router.push("/(main)/HyderatinKey")}
-            >
-              <View style={styles.infoCardContent}>
-                <Text style={styles.infoCardTitle}>Hydration is Key</Text>
-                <View style={styles.infoCardItem}>
-                  <Ionicons name="water-outline" size={16} color="#fff" />
-                  <Text style={styles.infoCardText}>Boost energy with water</Text>
-                </View>
-                <View style={styles.infoCardItem}>
-                  <Ionicons name="pint-outline" size={16} color="#fff" />
-                  <Text style={styles.infoCardText}>Importance of electrolytes</Text>
-                </View>
-                <View style={styles.infoCardItem}>
-                  <Ionicons name="cafe-outline" size={16} color="#fff" />
-                  <Text style={styles.infoCardText}>Avoid sugary drinks</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.infoCardButton}
-                  onPress={() => router.push("/(main)/HyderatinKey")}
-                >
-                  <Text style={styles.infoCardButtonText}>Stay hydrated</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
+        key="hydration-key"
+        style={[styles.infoCard, { backgroundColor: '#3f51b5' }]}
+        onPress={() => router.push("/(main)/HyderatinKey")}
+      >
+        <View style={styles.infoCardContent}>
+          {/* This new container organizes the title and the animation on one line */}
+          <View style={styles.headerRow}>
+            <Text style={styles.infoCardTitle}>Hydration is Key</Text>
+            <LottieView
+              source={require('@/anim/Drink water.json')}
+              style={styles.hydrationAnimation}
+              autoPlay
+              loop
+            />
+          </View>
+
+          {/* The rest of the card content is now neatly below the title and animation */}
+          <View style={styles.infoCardItem}>
+            <Ionicons name="water-outline" size={16} color="#fff" />
+            <Text style={styles.infoCardText}>Boost energy with water</Text>
+          </View>
+          <View style={styles.infoCardItem}>
+            <Ionicons name="pint-outline" size={16} color="#fff" />
+            <Text style={styles.infoCardText}>Importance of electrolytes</Text>
+          </View>
+          <View style={styles.infoCardItem}>
+            <Ionicons name="cafe-outline" size={16} color="#fff" />
+            <Text style={styles.infoCardText}>Avoid sugary drinks</Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.infoCardButton}
+            onPress={() => router.push("/(main)/HyderatinKey")}
+          >
+            <Text style={styles.infoCardButtonText}>Stay hydrated</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
 
             {/* Period-friendly foods card */}
             <TouchableOpacity
@@ -666,6 +684,7 @@ export default function Home() {
                   <Ionicons name="fast-food-outline" size={16} color="#fff" />
                   <Text style={styles.infoCardText}>What to avoid</Text>
                 </View>
+                
                 <TouchableOpacity
                   style={styles.infoCardButton}
                   onPress={() => router.push("/(main)/PeriodFriendlyFoods")}
@@ -928,6 +947,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontWeight: "600"
   },
+  predictionOvulationSection: {
+    backgroundColor: "#fff",
+    padding: 20,
+    marginHorizontal: 20,
+    borderRadius: 16,
+    alignItems: "center",
+    marginTop: 5, // Reduced spacing
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
   predictionSection: {
     backgroundColor: "#fde3f0",
     padding: 20,
@@ -967,8 +1000,25 @@ const styles = StyleSheet.create({
     marginTop: 15,
     alignSelf: 'center',
   },
+  editOvulationButton: {
+    backgroundColor: '#f43f5e',
+    borderRadius: 20,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+    marginTop: 15,
+    alignSelf: 'center',
+  },
   editButtonText: {
     color: "#f43f5e",
+    fontWeight: "600",
+  },
+  editOvulationButtonText: {
+    color: "#fff",
     fontWeight: "600",
   },
   infoCard: {

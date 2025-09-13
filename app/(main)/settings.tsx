@@ -10,8 +10,10 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import { useSettings } from "../../contexts/SettingsContext";
+import LottieView from "lottie-react-native";
 
 const settingsOptions = [
   { id: 1, label: "Report for a doctor", icon: "folder", lib: "Feather" },
@@ -31,10 +33,14 @@ const iconLibraries = { Feather, Ionicons };
 
 export default function Settings() {
   const router = useRouter();
-  const { settings, updateSetting } = useSettings();
+  const { settings } = useSettings();
   const [activeGoal, setActiveGoal] = useState<string>("Track cycle");
   const [isProfileComplete, setIsProfileComplete] = useState(false);
   const [userName, setUserName] = useState("");
+  const [comingSoonVisible, setComingSoonVisible] = useState(false);
+  // New state for the content modal
+  const [contentModalVisible, setContentModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", text: "" });
 
   useEffect(() => {
     const checkProfileStatus = async () => {
@@ -45,7 +51,6 @@ export default function Settings() {
         const storedPhone = await AsyncStorage.getItem("userPhone");
         const storedBio = await AsyncStorage.getItem("userBio");
 
-        // Check for all required fields
         if (storedName && storedEmail && storedDOB && storedPhone && storedBio) {
           setIsProfileComplete(true);
           setUserName(storedName);
@@ -120,6 +125,16 @@ export default function Settings() {
     }
   };
 
+  const handleUpdateProfile = () => {
+    router.push("/(main)/updateProfile");
+  };
+
+  // Function to handle opening the content modal with different content
+  const handleContentModal = (title: string, text: string) => {
+    setModalContent({ title, text });
+    setContentModalVisible(true);
+  };
+
   const renderOption = (item: (typeof settingsOptions)[0]) => {
     const IconComponent = iconLibraries[item.lib as keyof typeof iconLibraries];
     return (
@@ -140,10 +155,6 @@ export default function Settings() {
     );
   };
 
-  const handleUpdateProfile = () => {
-    router.push("/(main)/updateProfile");
-  };
-
   return (
     <LinearGradient colors={["#fff", "#fdf2f8"]} style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -160,7 +171,9 @@ export default function Settings() {
         <View style={styles.accountCard}>
           <View style={styles.accountInfo}>
             <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{isProfileComplete ? getInitials(userName) : "?"}</Text>
+              <Text style={styles.avatarText}>
+                {isProfileComplete ? getInitials(userName) : "?"}
+              </Text>
             </View>
             <View>
               <Text style={styles.accountText}>
@@ -189,7 +202,13 @@ export default function Settings() {
                   styles.goalButton,
                   activeGoal === goal && styles.goalButtonActive,
                 ]}
-                onPress={() => setActiveGoal(goal)}
+                onPress={() => {
+                  if (goal === "Get pregnant" || goal === "Track pregnancy") {
+                    setComingSoonVisible(true);
+                  } else {
+                    setActiveGoal(goal);
+                  }
+                }}
               >
                 <Text
                   style={[
@@ -205,23 +224,34 @@ export default function Settings() {
         </View>
 
         {/* Options Section */}
-        <View style={styles.optionsList}>
-          {settingsOptions.map(renderOption)}
-        </View>
+        <View style={styles.optionsList}>{settingsOptions.map(renderOption)}</View>
 
         {/* Data Protected Card */}
         <View style={styles.dataProtectedCard}>
           <View style={styles.protectedContent}>
-            <Ionicons name="shield-checkmark" size={40} color="#2e8b57" />
+            <LottieView
+              source={require("@/anim/Safe and secure.json")}
+              style={{ height: 70, width: 70 }}
+              autoPlay
+              loop
+            />
             <View style={styles.protectedTextContainer}>
               <Text style={styles.protectedTitle}>Your data is protected</Text>
               <Text style={styles.protectedDescription}>
-                Your privacy is our top priority. We never sell your data and
-                you can delete it anytime.
+                Your privacy is our top priority. We never sell your data and you can
+                delete it anytime.
               </Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.learnMoreButton}>
+          <TouchableOpacity
+            style={styles.learnMoreButton}
+            onPress={() =>
+              handleContentModal(
+                "Data Protection",
+                "We take your privacy seriously. Your data is encrypted and stored on our secure servers, ensuring that your personal information is protected from unauthorized access. We do not sell, rent, or share your data with any third parties for marketing or other commercial purposes. You have full control over your information and can choose to delete your account and all associated data at any time. We are committed to maintaining the highest standards of data security to protect your privacy."
+              )
+            }
+          >
             <Text style={styles.learnMoreText}>Learn more</Text>
           </TouchableOpacity>
         </View>
@@ -229,13 +259,92 @@ export default function Settings() {
         {/* Footer */}
         <View style={styles.footer}>
           <View style={styles.footerLinks}>
-            <Text style={styles.footerLink}>Privacy Policy</Text>
+            <TouchableOpacity
+              onPress={() =>
+                handleContentModal(
+                  "Privacy Policy",
+                  "At Luna, your privacy is our highest priority. This Privacy Policy explains how we collect, use, and protect your information when you use our app. 1. What Information We Collect We only collect the information necessary to provide and improve our period-tracking services. This includes: Period and cycle data: The dates of your period, cycle length, and any related symptoms you choose to log. Health and wellness data: This may include details you provide about your mood, physical symptoms, and other health-related observations. Basic profile information: Your name, email address, and date of birth, which are used to personalize your experience and for account management. We do not collect any personally identifiable information without your explicit consent.  2. How We Use Your Information Your data is used solely to provide you with a personalized and effective service. We use it to: Track and predict your menstrual cycle: The core function of the app is to help you understand your body’s unique patterns. Provide personalized insights: We analyze your data to give you insights into your health and wellness trends. Improve app functionality: Aggregated, anonymized data helps us understand user behavior and make the app better for everyone.  3. How We Protect Your Information We use industry-standard security measures to protect your data. All data is encrypted both in transit and at rest on our secure servers. This ensures that your personal information is protected from unauthorized access, disclosure, or alteration. We regularly review and update our security protocols to maintain the highest level of protection. We do not sell, rent, or share your personal data with any third-party companies for marketing, advertising, or other commercial purposes. Your information is and will remain private.  4. Your Rights You have complete control over your data. You can: Access your data: View and review the information you have logged in the app at any time. Update your data: Easily edit or correct any information in your profile or cycle logs. Delete your data: You have the right to delete your account and all associated data permanently at any time. If you have any questions about this Privacy Policy or our data practices, please contact us at bhavishyaver50@gmail.com."
+                )
+              }
+            >
+              <Text style={styles.footerLink}>Privacy Policy</Text>
+            </TouchableOpacity>
             <Text style={styles.linkSeparator}>•</Text>
-            <Text style={styles.footerLink}>Terms of Use</Text>
+            <TouchableOpacity
+              onPress={() =>
+                handleContentModal(
+                  "Terms of Use",
+                  "These are the Terms of Use for the Luna app. They outline the rules and regulations for using our services, including user responsibilities and our rights as the service provider. By using the app, you agree to these terms."
+                )
+              }
+            >
+              <Text style={styles.footerLink}>Terms of Use</Text>
+            </TouchableOpacity>
           </View>
-          <Text style={styles.footerLink}>Accessibility Statement</Text>
+          <TouchableOpacity
+            onPress={() =>
+              handleContentModal(
+                "Accessibility Statement",
+                "Accessibility Statement Luna is committed to making our app accessible to everyone, regardless of ability or disability. We believe that health and wellness tools should be available to all. We are actively working to improve the user experience for everyone by applying relevant accessibility standards. Our goal is to meet the Web Content Accessibility Guidelines (WCAG) 2.1 at the AA level, an international standard that provides guidance on how to make web content more accessible to people with disabilities. Our efforts include: Continuous Improvement,UserFeedback, Future Updates."
+              )
+            }
+          >
+            <Text style={styles.footerLink}>Accessibility Statement</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Coming Soon Modal */}
+      <Modal
+        visible={comingSoonVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setComingSoonVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <LottieView
+              source={require("@/anim/Pregnancy Test.json")}
+              autoPlay
+              loop
+              style={{ width: 150, height: 150 }}
+            />
+            <Text style={styles.modalTitle}>Coming Soon!</Text>
+            <Text style={styles.modalDescription}>
+              This feature is under development. Stay tuned ✨
+            </Text>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setComingSoonVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Got it</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Generic Content Modal */}
+      <Modal
+        visible={contentModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setContentModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.contentModalContent}>
+            <Text style={styles.contentModalTitle}>{modalContent.title}</Text>
+            <ScrollView style={styles.contentModalScroll}>
+              <Text style={styles.contentModalText}>{modalContent.text}</Text>
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.modalButton}
+              onPress={() => setContentModalVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -349,4 +458,66 @@ const styles = StyleSheet.create({
   footerLinks: { flexDirection: "row", marginBottom: 10 },
   footerLink: { color: "#ff5083", fontSize: 13, marginHorizontal: 5 },
   linkSeparator: { color: "#ff5083", fontSize: 13, fontWeight: "bold" },
+
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    width: "80%",
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#ff5083",
+    marginTop: 10,
+  },
+  modalDescription: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    marginVertical: 10,
+  },
+  modalButton: {
+    marginTop: 15,
+    backgroundColor: "#ff5083",
+    paddingHorizontal: 25,
+    paddingVertical: 10,
+    borderRadius: 30,
+    alignItems:'center'
+  },
+  modalButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  // New modal styles for the content modal
+  contentModalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 20,
+    width: "90%",
+    maxHeight: "70%",
+  },
+  contentModalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  contentModalScroll: {
+    maxHeight: "80%",
+  },
+  contentModalText: {
+    fontSize: 14,
+    color: "#555",
+    lineHeight: 22,
+  },
 });

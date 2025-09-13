@@ -46,7 +46,7 @@ export default function Help() {
   ];
 
   const contactSupport = () => {
-    Linking.openURL("mailto:support@lunaapp.com");
+    Linking.openURL("mailto:bhavishyaver50@gmail.com");
   };
 
   const toggleFaq = (index: number) => {
