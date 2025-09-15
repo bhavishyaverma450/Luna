@@ -1,50 +1,45 @@
-# Welcome to your Expo app 👋
+# **Luna: Your Personal Period & Ovulation Tracker**
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Welcome to **Luna**, an all-in-one health app designed to help you track your menstrual cycles, predict ovulation, and connect with a supportive community.
 
-## Get started
+---
 
-1. Install dependencies
+## **About the Project**
 
-   ```bash
-   npm install
-   ```
+Luna is built to empower women by providing them with the tools and information they need to better understand their bodies. With a user-friendly interface, the app allows you to log your period dates, track symptoms, and receive personalized predictions for your upcoming cycles and ovulation. But we're more than just a tracker; we're a community.
 
-2. Start the app
+### **Core Features**
 
-   ```bash
-   npx expo start
-   ```
+* **Period and Ovulation Tracking:** Easily log your menstrual dates and receive accurate predictions for your next period and ovulation window.
+* **Health Insights:** Gain a deeper understanding of your body with personalized health insights based on your logged data.
+* **Community Chat Room:** Connect with other users in a moderated chat room. Share experiences and get advice, with a one-message-per-day limit to ensure a spam-free and high-quality environment.
+* **Educational Articles:** Access a library of articles on various topics related to menstrual health, fertility, and wellness. You can also engage with the content by leaving comments and discussing with others.
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## **Tech Stack**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+This project leverages a modern and robust tech stack to deliver a seamless user experience.
 
-## Get a fresh project
+### **Frontend**
 
-When you're ready, run:
+* **React Native:** A powerful framework for building native mobile apps using JavaScript and React.
+* **Expo:** A set of tools and services built on top of React Native, making it easier and faster to develop and deploy apps.
 
-```bash
-npm run reset-project
-```
+### **Backend**
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+* **Node.js:** A JavaScript runtime used to build a scalable and efficient backend server.
+* **Express.js:** A minimal and flexible Node.js web application framework that provides a robust set of features for building our API.
+* **MongoDB:** A flexible, NoSQL document database that allows for easy storage and retrieval of user data, health logs, and community content.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+## **Future Scope**
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+We are committed to continuously improving Luna. Here's a sneak peek at what we're planning for the future:
 
-## Join the community
+* **Partner Functionality:** A new feature that allows you to securely share your cycle information with a partner, helping them better understand and support you.
+* **Enhanced Insights:** Deeper analytics and personalized reports on your health trends.
+* **More Community Features:** Expanding the community aspect with private messaging, groups, and more.
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+We believe Luna will be a valuable tool in your journey toward better health and self-awareness. Thank you for being a part of our community! 💖
