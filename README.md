@@ -29,7 +29,6 @@ This project leverages a modern and robust tech stack to deliver a seamless user
 ### **Backend**
 
 * **Node.js:** A JavaScript runtime used to build a scalable and efficient backend server.
-* **Express.js:** A minimal and flexible Node.js web application framework that provides a robust set of features for building our API.
 * **MongoDB:** A flexible, NoSQL document database that allows for easy storage and retrieval of user data, health logs, and community content.
 
 ---
