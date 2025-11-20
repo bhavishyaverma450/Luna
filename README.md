@@ -52,6 +52,8 @@ Luna is designed to make menstrual and ovulation tracking simple and meaningful.
 * Node.js
 * MongoDB
 
+* Deployed Backend link:- https://luna-backend-akn7.onrender.com
+
 ---
 
 # 🚀 Future Improvements
@@ -75,7 +77,6 @@ This project helped me improve my skills in:
 * UI/UX design
 
 ---
-
 # 💖 Thank You
 
 Thank you for checking out my project!
