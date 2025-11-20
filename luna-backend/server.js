@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require("socket.io");
+const path = require("path");   // <-- ADDED for serving UI
 
 dotenv.config();
 
@@ -31,6 +32,9 @@ const io = new Server(server, {
 app.use(cors());
 app.use(bodyParser.json());
 app.set('io', io);
+
+// Serve static files from /public (Landing Page + Dashboard)
+app.use(express.static(path.join(__dirname, "public")));
 
 // --- MongoDB Connection ---
 mongoose.connect(process.env.MONGO_URI)
@@ -132,8 +136,15 @@ app.get("/health", (req, res) => {
   });
 });
 
-// --- Default Route ---
-app.get('/', (req, res) => res.send('🚀 Luna backend running...'));
+// --- Status Dashboard Page ---
+app.get("/status", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "status.html"));
+});
+
+// --- Beautiful Landing Page ---
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));

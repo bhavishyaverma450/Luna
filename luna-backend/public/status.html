@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luna Status Dashboard</title>
+  <title>Luna API Status Dashboard</title>
 
   <style>
     body {
@@ -48,7 +48,6 @@
 <body>
   <div class="card">
     <h1>📊 Luna API Status Dashboard</h1>
-
     <div id="stats"></div>
   </div>
 
@@ -60,8 +59,10 @@
       document.getElementById("stats").innerHTML = `
         <div class="stat"><b>Status:</b> ${data.status}</div>
         <div class="stat"><b>Service:</b> ${data.service}</div>
+        <div class="stat"><b>Environment:</b> ${data.environment}</div>
         <div class="stat"><b>Time:</b> ${data.time}</div>
-        <div class="stat"><b>Uptime:</b> ${Math.floor(data.uptime)} seconds</div>
+        <div class="stat"><b>Uptime:</b> ${Math.floor(data.uptime)} sec</div>
+        <div class="stat"><b>MongoDB:</b> ${data.mongo}</div>
       `;
     }
 
