@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luna – Privacy Policy</title>
+    <meta name="description" content="Privacy Policy and Support information for Luna Demo Health & Fitness App">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px;
+            max-width: 900px;
+            color: #333;
+        }
+        h1 {
+            color: #5e3b8c;
+        }
+        h2 {
+            margin-top: 24px;
+            color: #444;
+        }
+        p {
+            margin: 10px 0;
+        }
+        footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Luna – Demo Health & Fitness App</h1>
+
+<h2>About Luna</h2>
+<p>
+Luna is a demo health and fitness application created for educational and demonstration purposes.
+It provides period tracking features, health-related articles, and real-time interaction modules
+to showcase mobile application development concepts.
+</p>
+
+<h2>Privacy Policy</h2>
+<p>
+Luna respects user privacy. This application does not sell, rent, or share user data with third
+parties for commercial purposes.
+</p>
+
+<h2>Data Usage</h2>
+<p>
+The app may store user-entered data locally on the device or securely in the backend only to
+support application functionality. No sensitive personal data is collected for advertising,
+analytics, or monetization purposes.
+</p>
+
+<h2>Medical Disclaimer</h2>
+<p>
+Luna is a demo project and is not intended for medical diagnosis, treatment, or professional
+health advice. Users should consult qualified healthcare professionals for medical concerns.
+</p>
+
+<h2>Support & Contact</h2>
+<p>
+If you have any questions, feedback, or support requests regarding this demo application,
+you can contact the developer at:
+</p>
+<p>
+<strong>Email:</strong> bhavishyaver50@gmail.com
+</p>
+
+<footer>
+    <p>
+        Developer: Bhavishya Verma<br>
+        Application Type: Demo / Educational Project
+    </p>
+</footer>
+
+</body>
+</html>
